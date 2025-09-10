@@ -21,7 +21,7 @@ const ERC20_APPROVE_ABI = [
 const contractAddress = process.env.CONTRACT_ADDRESS || CARLSJR_ADDRESS;
 const privateKey      = process.env.PRIVATE_KEY;
 const rpcUrl          = process.env.RPC_URL;
-const MAX_WORKERS     = 2;
+const MAX_WORKERS     = 8;
 
 if (!privateKey || !rpcUrl) {
   console.error(`[${new Date().toISOString()}] Missing PRIVATE_KEY or RPC_URL. Exiting.`);
@@ -65,7 +65,7 @@ function validatePairs(pairs) {
 }
 
 // Batch aggregator for combining multiple profitable routes sharing the same loan token
-const BATCH_WINDOW_MS = Number(process.env.BATCH_WINDOW_MS || '1500');
+const BATCH_WINDOW_MS = Number(process.env.BATCH_WINDOW_MS || '150000');
 const pendingBatches = new Map(); // loanToken -> { payloads: [], timer: Timeout }
 
 // New helper: clamp amountIn by token decimals using MIN/MAX units in env
@@ -75,8 +75,8 @@ async function clampAmountInByToken(loanToken, requested) {
     const erc20 = new ethers.Contract(loanToken, ERC20_MIN_ABI, provider);
     decimals = await erc20.decimals();
   } catch {}
-  const minUnitsStr = String(process.env.MIN_FLASHLOAN_UNITS || '1');
-  const maxUnitsStr = String(process.env.MAX_FLASHLOAN_UNITS || '10');
+  const minUnitsStr = String(process.env.MIN_FLASHLOAN_UNITS || '100');
+  const maxUnitsStr = String(process.env.MAX_FLASHLOAN_UNITS || '1000000');
   const minUnits = ethers.parseUnits(minUnitsStr, decimals);
   const maxUnits = ethers.parseUnits(maxUnitsStr, decimals);
 

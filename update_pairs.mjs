@@ -13,15 +13,15 @@ const OUTPUT_PATHS = path.resolve(ROOT, './paths.json');
 const REGISTRY = {
   polygon: {
     v2Routers: [
-      { id: 'quickswap', name: 'QuickSwap', router: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff' },
-      { id: 'sushiswap_polygon_pos', name: 'SushiSwap', router: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' }
+      { id: 'quickswap',            name: 'QuickSwap',            router: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff' },
+      { id: 'sushiswap_polygon_pos', name: 'SushiSwap',            router: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' }
     ],
     balancerVault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8'
   },
   bsc: {
     v2Routers: [
-      { id: 'pancakeswap_v2', name: 'PancakeSwap V2', router: '0x10ED43C718714eb63d5aA57B78B54704E256024E' },
-      { id: 'sushiswap_bsc', name: 'SushiSwap', router: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' }
+      { id: 'pancakeswap_v2',       name: 'PancakeSwap V2',       router: '0x10ED43C718714eb63d5aA57B78B54704E256024E' },
+      { id: 'sushiswap_bsc',        name: 'SushiSwap',            router: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' }
     ],
     balancerVault: null
   }
@@ -53,17 +53,17 @@ function makeV2TradePath(router, path, description = 'V2 path', prefs = {}) {
 }
 
 async function main() {
-  const chain = (process.argv.find(x => x.startsWith('--chain=')) || '--chain=polygon').split('=')[1];
+  const chain = (process.argv.find(x => x.startsWith('--chain=')) || '--chain=bsc').split('=')[1];
   const cfg = REGISTRY[chain];
   if (!cfg) throw new Error(`Unsupported chain: ${chain}`);
 
   const rawPairs = JSON.parse(await fs.readFile(INPUT_PAIRS, 'utf8'));
   const hubs = buildHubs(rawPairs);
-
   const out = [];
 
   for (const base of rawPairs) {
     const [a, b] = base.tokens;
+
     const entry = {
       name: base.name,
       pairAddress: base.address || null,
@@ -78,7 +78,7 @@ async function main() {
     // Direct V2 paths per router
     for (const r of cfg.v2Routers) {
       entry.tradePaths.push(
-        makeV2TradePath(r.router, [a, b], `${r.name} direct`, { preferredDex: r.name, minLiquidityUSD: 3000, maxSlippageBps: 50 })
+        makeV2TradePath(r.router, [a, b], `${r.name} direct`,  { preferredDex: r.name, minLiquidityUSD: 3000, maxSlippageBps: 50 })
       );
       entry.tradePaths.push(
         makeV2TradePath(r.router, [b, a], `${r.name} reverse`, { preferredDex: r.name, minLiquidityUSD: 3000, maxSlippageBps: 50 })
@@ -88,6 +88,7 @@ async function main() {
     // Triangular via hubs (A -> H -> B and B -> H -> A)
     for (const hub of hubs) {
       if (hub.toLowerCase() === a.toLowerCase() || hub.toLowerCase() === b.toLowerCase()) continue;
+
       for (const r of cfg.v2Routers) {
         entry.tradePaths.push(
           {
@@ -101,6 +102,7 @@ async function main() {
             maxSlippageBps: 75
           }
         );
+
         entry.tradePaths.push(
           {
             description: `${r.name} triangular via hub (reverse)`,
@@ -116,23 +118,13 @@ async function main() {
       }
     }
 
-    // Deduplicate identical steps
-    const serialized = new Set();
-    entry.tradePaths = entry.tradePaths.filter(tp => {
-      const key = JSON.stringify(tp);
-      if (serialized.has(key)) return false;
-      serialized.add(key);
-      return true;
-    });
-
     out.push(entry);
   }
 
-  await fs.writeFile(OUTPUT_PATHS, JSON.stringify(out, null, 2));
-  console.log(`paths.json written for ${chain}. Entries:`, out.length);
+  await fs.writeFile(OUTPUT_PATHS, JSON.stringify(out, null, 2), 'utf-8');
 }
 
-main().catch(e => {
-  console.error('autoDexPaths error:', e);
+main().catch(err => {
+  console.error('autoDexPaths failed:', err?.message || err);
   process.exit(1);
 });

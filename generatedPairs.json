@@ -19,11 +19,11 @@
     ],
     "tradePaths": [
       {
-        "description": "QuickSwap direct",
+        "description": "PancakeSwap V2 direct",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -32,16 +32,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap reverse",
+        "description": "PancakeSwap V2 reverse",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -50,7 +50,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
@@ -112,11 +112,11 @@
     ],
     "tradePaths": [
       {
-        "description": "QuickSwap direct",
+        "description": "PancakeSwap V2 direct",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x3813e82e6f7098b9583FC0F33a962D02018B6803",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -125,16 +125,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap reverse",
+        "description": "PancakeSwap V2 reverse",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x3813e82e6f7098b9583FC0F33a962D02018B6803"
@@ -143,7 +143,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
@@ -184,11 +184,11 @@
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap triangular via hub",
+        "description": "PancakeSwap V2 triangular via hub",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x3813e82e6f7098b9583FC0F33a962D02018B6803",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -198,7 +198,7 @@
           },
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -207,16 +207,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 75
       },
       {
-        "description": "QuickSwap triangular via hub (reverse)",
+        "description": "PancakeSwap V2 triangular via hub (reverse)",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -226,7 +226,7 @@
           },
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x3813e82e6f7098b9583FC0F33a962D02018B6803"
@@ -235,7 +235,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 75
       },
@@ -317,11 +317,11 @@
     ],
     "tradePaths": [
       {
-        "description": "QuickSwap direct",
+        "description": "PancakeSwap V2 direct",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -330,16 +330,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap reverse",
+        "description": "PancakeSwap V2 reverse",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063"
@@ -348,7 +348,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
@@ -389,11 +389,11 @@
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap triangular via hub",
+        "description": "PancakeSwap V2 triangular via hub",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -403,7 +403,7 @@
           },
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -412,16 +412,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 75
       },
       {
-        "description": "QuickSwap triangular via hub (reverse)",
+        "description": "PancakeSwap V2 triangular via hub (reverse)",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -431,7 +431,7 @@
           },
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063"
@@ -440,7 +440,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 75
       },
@@ -522,11 +522,11 @@
     ],
     "tradePaths": [
       {
-        "description": "QuickSwap direct",
+        "description": "PancakeSwap V2 direct",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -535,16 +535,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap reverse",
+        "description": "PancakeSwap V2 reverse",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
@@ -553,7 +553,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
@@ -594,11 +594,11 @@
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap triangular via hub",
+        "description": "PancakeSwap V2 triangular via hub",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -608,7 +608,7 @@
           },
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -617,16 +617,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 75
       },
       {
-        "description": "QuickSwap triangular via hub (reverse)",
+        "description": "PancakeSwap V2 triangular via hub (reverse)",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -636,7 +636,7 @@
           },
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
@@ -645,7 +645,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 75
       },
@@ -727,11 +727,11 @@
     ],
     "tradePaths": [
       {
-        "description": "QuickSwap direct",
+        "description": "PancakeSwap V2 direct",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -740,16 +740,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap reverse",
+        "description": "PancakeSwap V2 reverse",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6"
@@ -758,7 +758,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
@@ -799,11 +799,11 @@
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap triangular via hub",
+        "description": "PancakeSwap V2 triangular via hub",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -813,7 +813,7 @@
           },
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -822,16 +822,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 75
       },
       {
-        "description": "QuickSwap triangular via hub (reverse)",
+        "description": "PancakeSwap V2 triangular via hub (reverse)",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -841,7 +841,7 @@
           },
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6"
@@ -850,7 +850,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 75
       },
@@ -932,11 +932,11 @@
     ],
     "tradePaths": [
       {
-        "description": "QuickSwap direct",
+        "description": "PancakeSwap V2 direct",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -945,16 +945,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap reverse",
+        "description": "PancakeSwap V2 reverse",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x172370d5Cd63279eFa6d502DAB29171933a610AF"
@@ -963,7 +963,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 50
       },
@@ -1004,11 +1004,11 @@
         "maxSlippageBps": 50
       },
       {
-        "description": "QuickSwap triangular via hub",
+        "description": "PancakeSwap V2 triangular via hub",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x172370d5Cd63279eFa6d502DAB29171933a610AF",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -1018,7 +1018,7 @@
           },
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
@@ -1027,16 +1027,16 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 75
       },
       {
-        "description": "QuickSwap triangular via hub (reverse)",
+        "description": "PancakeSwap V2 triangular via hub (reverse)",
         "steps": [
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
@@ -1046,7 +1046,7 @@
           },
           {
             "swapType": 0,
-            "router": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+            "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
             "path": [
               "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
               "0x172370d5Cd63279eFa6d502DAB29171933a610AF"
@@ -1055,7 +1055,7 @@
             "poolId": "0x0000000000000000000000000000000000000000000000000000000000000000"
           }
         ],
-        "preferredDex": "QuickSwap",
+        "preferredDex": "PancakeSwap V2",
         "minLiquidityUSD": 3000,
         "maxSlippageBps": 75
       },

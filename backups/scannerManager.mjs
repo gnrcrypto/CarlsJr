@@ -11,6 +11,12 @@ import { CARLSJR_ABI, CARLSJR_ADDRESS, ERC20_MIN_ABI } from './dynamicAbi.mjs';
 const GENERATED_FILE = path.resolve('./generatedPairs.json');
 const WORKER_PATH    = path.resolve('./scannerWorker.mjs');
 
+// Local minimal ABI for allowance/approve to fix "token.allowance is not a function"
+const ERC20_APPROVE_ABI = [
+  'function allowance(address owner, address spender) view returns (uint256)',
+  'function approve(address spender, uint256 amount) returns (bool)'
+];
+
 // Use env var or fallback to on-chain default
 const contractAddress = process.env.CONTRACT_ADDRESS || CARLSJR_ADDRESS;
 const privateKey      = process.env.PRIVATE_KEY;
@@ -59,7 +65,7 @@ function validatePairs(pairs) {
 }
 
 // Batch aggregator for combining multiple profitable routes sharing the same loan token
-const BATCH_WINDOW_MS = Number(process.env.BATCH_WINDOW_MS || '1500');
+const BATCH_WINDOW_MS = Number(process.env.BATCH_WINDOW_MS || '150000');
 const pendingBatches = new Map(); // loanToken -> { payloads: [], timer: Timeout }
 
 // New helper: clamp amountIn by token decimals using MIN/MAX units in env
@@ -69,8 +75,8 @@ async function clampAmountInByToken(loanToken, requested) {
     const erc20 = new ethers.Contract(loanToken, ERC20_MIN_ABI, provider);
     decimals = await erc20.decimals();
   } catch {}
-  const minUnitsStr = String(process.env.MIN_FLASHLOAN_UNITS || '1');
-  const maxUnitsStr = String(process.env.MAX_FLASHLOAN_UNITS || '10000');
+  const minUnitsStr = String(process.env.MIN_FLASHLOAN_UNITS || '100');
+  const maxUnitsStr = String(process.env.MAX_FLASHLOAN_UNITS || '1000000');
   const minUnits = ethers.parseUnits(minUnitsStr, decimals);
   const maxUnits = ethers.parseUnits(maxUnitsStr, decimals);
 
@@ -113,17 +119,66 @@ function scheduleBatchSend(loanToken /* string */) {
 
     const payloads = entry.payloads;
 
-    // Merge all tradePaths sequentially, assume they all round-trip to the loan token
+    // Optimize route selection:
+    // 1) Prefer payloads that both start and end with the loan token (round-trip).
+    // 2) If none, try to stitch two payloads: lt -> X then X -> lt.
+    // 3) If still none, fall back to any payloads that start with lt.
+    const lt = String(loanToken).toLowerCase();
+
+    const startsWith = (p) => p?.tradePath?.[0]?.path?.[0]?.toLowerCase() === lt;
+    const endTokenOf = (p) => {
+      const lastStep = p?.tradePath?.[p.tradePath.length - 1];
+      return lastStep?.path?.[lastStep.path.length - 1]?.toLowerCase();
+    };
+
+    const roundTrip = payloads.filter(p => startsWith(p) && endTokenOf(p) === lt);
+
+    let chosen = [];
+    if (roundTrip.length > 0) {
+      chosen = roundTrip; // concatenate multiple round-trip routes
+    } else {
+      // Attempt to stitch two payloads: lt->X then X->lt
+      const startLT = payloads.filter(p => startsWith(p));
+      // Build index by start token for quick lookup
+      const byStart = new Map();
+      for (const p of payloads) {
+        const s = p?.tradePath?.[0]?.path?.[0]?.toLowerCase();
+        if (!s) continue;
+        if (!byStart.has(s)) byStart.set(s, []);
+        byStart.get(s).push(p);
+      }
+      let stitched = null;
+      for (const p of startLT) {
+        const mid = endTokenOf(p);
+        if (!mid) continue;
+        const cands = byStart.get(mid) || [];
+        const q = cands.find(x => endTokenOf(x) === lt);
+        if (q) { stitched = [p, q]; break; }
+      }
+      if (stitched) {
+        chosen = stitched;
+      } else {
+        // Fallback: any payloads that at least start at lt
+        chosen = startLT;
+      }
+    }
+
+    if (chosen.length === 0) {
+      log('warn', `No round-trip-safe routes for loanToken ${loanToken}. Skipping batch.`);
+      return;
+    }
+
+    // Merge tradePaths sequentially from chosen set
     let combinedTradePath = [];
     let totalMinProfit = 0n;
 
-    for (const p of payloads) {
+    for (const p of chosen) {
       combinedTradePath = combinedTradePath.concat(p.tradePath);
       totalMinProfit += BigInt(p.minProfit);
     }
 
     // Use the first payload's amountIn, then clamp it
-    const requestedAmountIn = BigInt(payloads[0].amountIn || '0');
+    const requestedAmountIn = BigInt(chosen[0].amountIn || '0');
     const { amount: effectiveAmountIn } = await clampAmountInByToken(loanToken, requestedAmountIn);
 
     // Proportionally scale the profit expectation to the clamped amount
@@ -147,7 +202,7 @@ function scheduleBatchSend(loanToken /* string */) {
       amountOutMinimum: 0n
     };
 
-    log('info', `💰 Executing batched arbitrage for loanToken ${loanToken} with ${payloads.length} routes`, params);
+    log('info', `💰 Executing batched arbitrage for loanToken ${loanToken} with ${chosen.length} routes`, params);
 
     for (let i = 0; i < 3; i++) {
       try {
@@ -167,6 +222,56 @@ function scheduleBatchSend(loanToken /* string */) {
   pendingBatches.set(loanToken, entry);
 }
 
+// ---------- New: Pre-approval flow ----------
+function collectRoutersAndTokens(pairs) {
+  const routers = new Set();
+  const tokens = new Set();
+  for (const p of pairs) {
+    for (const path of (p.tradePaths || [])) {
+      for (const step of (path.steps || [])) {
+        if (step.router && ethers.isAddress(step.router)) routers.add(step.router.toLowerCase());
+        for (const t of (step.path || [])) {
+          if (t && ethers.isAddress(t)) tokens.add(t.toLowerCase());
+        }
+      }
+    }
+  }
+  return { routers: [...routers], tokens: [...tokens] };
+}
+
+async function ensureApprovals(pairs) {
+  const { routers, tokens } = collectRoutersAndTokens(pairs);
+  const spenders = new Set([...routers.map(r => r), contractAddress.toLowerCase()]); // routers + CarlsJr (defensive)
+  const threshold = ethers.MaxUint256 / 2n;
+
+  log('info', `Approval plan -> tokens: ${tokens.length}, spenders: ${spenders.size}`);
+
+  for (const tokenAddr of tokens) {
+    const token = new ethers.Contract(tokenAddr, ERC20_APPROVE_ABI, wallet);
+    for (const spender of spenders) {
+      try {
+        const current = await token.allowance(wallet.address, spender);
+        if (current && BigInt(current.toString()) >= threshold) {
+          log('info', `Allowance OK token=${tokenAddr} -> spender=${spender}`);
+          continue;
+        }
+        log('info', `Approving token=${tokenAddr} -> spender=${spender} to MaxUint`);
+        const tx = await token.approve(spender, ethers.MaxUint256, resolveTxOpts());
+        log('info', `Approve TX sent: ${tx.hash}`);
+        await tx.wait();
+        log('info', `Approve TX confirmed: ${tx.hash}`);
+      } catch (err) {
+        log('error', `Approve failed token=${tokenAddr} spender=${spender}:`, err?.message || err);
+      }
+    }
+  }
+
+  // Note: Flashloans generally do not need ERC20 approvals; lenders transfer to borrower.
+  // This placeholder remains in case a future lender requires approvals.
+  return true;
+}
+// ---------- End: Pre-approval flow ----------
+
 export function spawnScannerManager(liveMode = false) {
   let pairs;
   try {
@@ -181,53 +286,59 @@ export function spawnScannerManager(liveMode = false) {
     process.exit(1);
   }
 
-  let nextPairIndex = 0;
-  let activeWorkers  = 0;
+  // Defer scanning until approvals complete
+  ensureApprovals(pairs).then(() => {
+    let nextPairIndex = 0;
+    let activeWorkers  = 0;
 
-  function spawnNext() {
-    if (nextPairIndex >= pairs.length) return;
-    if (activeWorkers >= MAX_WORKERS) return;
+    function spawnNext() {
+      if (nextPairIndex >= pairs.length) return;
+      if (activeWorkers >= MAX_WORKERS) return;
 
-    const pair = pairs[nextPairIndex++];
-    const w    = new Worker(WORKER_PATH);
-    activeWorkers++;
+      const pair = pairs[nextPairIndex++];
+      const w    = new Worker(WORKER_PATH);
+      activeWorkers++;
 
-    w.on('online', () => {
-      log('info', `Worker started for ${pair.name}`);
-      w.postMessage({ type: 'SCAN_PAIR', pair, liveMode });
-    });
+      w.on('online', () => {
+        log('info', `Worker started for ${pair.name}`);
+        w.postMessage({ type: 'SCAN_PAIR', pair, liveMode });
+      });
 
-    w.on('message', async (msg) => {
-      if (msg.type === 'ARBITRAGE_FOUND') {
-        const { tradePath, amountIn, minProfit } = msg.payload;
-        // Determine loan token (first token of first step)
-        const loanToken = tradePath?.[0]?.path?.[0];
-        if (!loanToken) {
-          log('error', 'Invalid payload: missing loan token');
-          return;
+      w.on('message', async (msg) => {
+        if (msg.type === 'ARBITRAGE_FOUND') {
+          const { tradePath, amountIn, minProfit } = msg.payload;
+          // Determine loan token (first token of first step)
+          const loanToken = tradePath?.[0]?.path?.[0];
+          if (!loanToken) {
+            log('error', 'Invalid payload: missing loan token');
+            return;
+          }
+          // Queue payload for batching by loan token
+          const entry = pendingBatches.get(loanToken) || { payloads: [], timer: null };
+          entry.payloads.push({ tradePath, amountIn, minProfit });
+          pendingBatches.set(loanToken, entry);
+          scheduleBatchSend(loanToken);
+        } else {
+          log('info', 'Worker msg:', msg);
         }
-        // Queue payload for batching by loan token
-        const entry = pendingBatches.get(loanToken) || { payloads: [], timer: null };
-        entry.payloads.push({ tradePath, amountIn, minProfit });
-        pendingBatches.set(loanToken, entry);
-        scheduleBatchSend(loanToken);
-      } else {
-        log('info', 'Worker msg:', msg);
-      }
-    });
+      });
 
-    w.on('exit', (code) => {
-      log('info', `Worker for ${pair.name} exited (${code})`);
-      activeWorkers--;
+      w.on('exit', (code) => {
+        log('info', `Worker for ${pair.name} exited (${code})`);
+        activeWorkers--;
+        spawnNext();
+      });
+
+      w.on('error', (err) => log('error', 'Worker error:', err));
+    }
+
+    // initial burst
+    for (let i = 0; i < Math.min(MAX_WORKERS, pairs.length); i++) {
       spawnNext();
-    });
-
-    w.on('error', (err) => log('error', 'Worker error:', err));
-  }
-
-  // initial burst
-  for (let i = 0; i < Math.min(MAX_WORKERS, pairs.length); i++) {
-    spawnNext();
-  }
-  log('info', 'Scanner Manager ready.');
+    }
+    log('info', 'Scanner Manager ready.');
+  }).catch((err) => {
+    log('error', 'Approval workflow failed:', err?.message || err);
+    process.exit(1);
+  });
 }

@@ -10,24 +10,24 @@ export const SwapType = {
 // Canonical addresses (double-check for your target network)
 export const ADDRESSES = {
   // QuickSwap (UniswapV2 fork) — router + factory (Polygon)
-  QUICKSWAP_ROUTER: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff',
-  QUICKSWAP_FACTORY: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
+  QUICKSWAP_ROUTER: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
+  QUICKSWAP_FACTORY: '0xCA143Ce32Fe78f1f7019d7d551a6402fC5350c73',
 
   // SushiSwap router (multi-chain; used here for Polygon and BSC as a fallback)
-  SUSHISWAP_ROUTER: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506',
-  SUSHISWAP_FACTORY: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+  SUSHISWAP_ROUTER: '0xC0788A3aD43d79aa53B09c2EaCc313A787d1d607',
+  SUSHISWAP_FACTORY: '0x0841bd0B734E4f5853f0dF6b1e6602A66aBEA8aB',
 
   // PancakeSwap V2 router (BSC)
   PANCAKESWAP_V2_ROUTER: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
 
   // Balancer V2 Vault (Polygon)
-  BALANCER_VAULT: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
+  BALANCER_VAULT: '0x0000000000000000000000000000000000000000',
 
   // Aave v3 AddressesProvider on Polygon (used by CarlsJr)
-  AAVE_ADDRESSES_PROVIDER: '0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb',
+  AAVE_ADDRESSES_PROVIDER: '0x0000000000000000000000000000000000000000',
 
-  // WETH (Polygon)
-  WETH: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
+  // WETH (BSC uses WBNB as the wrapped native token)
+  WETH: '0xBB4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 };
 
 // Export the deployed CarlsJr address
@@ -130,8 +130,8 @@ export const NETWORK_CONFIGS = {
     v3Quoters: [
       '0x61fFE014bA17989E743c5F6cB21bF9697530B21e'
     ],
-    // Balancer may be absent on BSC; keep placeholder for interface compatibility
-    balancerVault: ADDRESSES.BALANCER_VAULT
+    // Balancer is not present on BSC
+    balancerVault: null
   }
 };
 
