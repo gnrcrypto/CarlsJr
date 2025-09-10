@@ -1,0 +1,138 @@
+// scripts/autoDexPaths.mjs
+// Build paths.json automatically from pairs.json and per-chain router registry.
+
+import fs from 'fs/promises';
+import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const ROOT = process.cwd();
+const INPUT_PAIRS = path.resolve(ROOT, './pairs.json');
+const OUTPUT_PATHS = path.resolve(ROOT, './paths.json');
+
+const REGISTRY = {
+  polygon: {
+    v2Routers: [
+      { id: 'quickswap', name: 'QuickSwap', router: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff' },
+      { id: 'sushiswap_polygon_pos', name: 'SushiSwap', router: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' }
+    ],
+    balancerVault: '0xBA12222222228d8Ba445958a75a0704d566BF2C8'
+  },
+  bsc: {
+    v2Routers: [
+      { id: 'pancakeswap_v2', name: 'PancakeSwap V2', router: '0x10ED43C718714eb63d5aA57B78B54704E256024E' },
+      { id: 'sushiswap_bsc', name: 'SushiSwap', router: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' }
+    ],
+    balancerVault: null
+  }
+};
+
+function uniqueArr(arr) {
+  return [...new Set(arr)];
+}
+
+function buildHubs(allPairs) {
+  const freq = new Map();
+  for (const p of allPairs) {
+    for (const t of (p.tokens || [])) {
+      freq.set(t, (freq.get(t) || 0) + 1);
+    }
+  }
+  // Hubs = tokens appearing in multiple pairs
+  return [...freq.entries()].filter(([_, c]) => c > 1).map(([t]) => t);
+}
+
+function makeV2TradePath(router, path, description = 'V2 path', prefs = {}) {
+  return {
+    description,
+    steps: [{ swapType: 0, router, path, fee: 0, poolId: '0x' + '00'.repeat(32) }],
+    preferredDex: prefs.preferredDex || '',
+    minLiquidityUSD: prefs.minLiquidityUSD ?? 5000,
+    maxSlippageBps: prefs.maxSlippageBps ?? 50
+  };
+}
+
+async function main() {
+  const chain = (process.argv.find(x => x.startsWith('--chain=')) || '--chain=polygon').split('=')[1];
+  const cfg = REGISTRY[chain];
+  if (!cfg) throw new Error(`Unsupported chain: ${chain}`);
+
+  const rawPairs = JSON.parse(await fs.readFile(INPUT_PAIRS, 'utf8'));
+  const hubs = buildHubs(rawPairs);
+
+  const out = [];
+
+  for (const base of rawPairs) {
+    const [a, b] = base.tokens;
+    const entry = {
+      name: base.name,
+      pairAddress: base.address || null,
+      tokens: [
+        { symbol: (base.name.split('/')[0] || 'T0'), address: a, decimals: (base.decimals && base.decimals[a]) || 18 },
+        { symbol: (base.name.split('/')[1] || 'T1'), address: b, decimals: (base.decimals && base.decimals[b]) || 18 }
+      ],
+      tradePaths: [],
+      minProfitPOL: '1'
+    };
+
+    // Direct V2 paths per router
+    for (const r of cfg.v2Routers) {
+      entry.tradePaths.push(
+        makeV2TradePath(r.router, [a, b], `${r.name} direct`, { preferredDex: r.name, minLiquidityUSD: 3000, maxSlippageBps: 50 })
+      );
+      entry.tradePaths.push(
+        makeV2TradePath(r.router, [b, a], `${r.name} reverse`, { preferredDex: r.name, minLiquidityUSD: 3000, maxSlippageBps: 50 })
+      );
+    }
+
+    // Triangular via hubs (A -> H -> B and B -> H -> A)
+    for (const hub of hubs) {
+      if (hub.toLowerCase() === a.toLowerCase() || hub.toLowerCase() === b.toLowerCase()) continue;
+      for (const r of cfg.v2Routers) {
+        entry.tradePaths.push(
+          {
+            description: `${r.name} triangular via hub`,
+            steps: [
+              { swapType: 0, router: r.router, path: [a, hub], fee: 0, poolId: '0x' + '00'.repeat(32) },
+              { swapType: 0, router: r.router, path: [hub, b], fee: 0, poolId: '0x' + '00'.repeat(32) }
+            ],
+            preferredDex: r.name,
+            minLiquidityUSD: 3000,
+            maxSlippageBps: 75
+          }
+        );
+        entry.tradePaths.push(
+          {
+            description: `${r.name} triangular via hub (reverse)`,
+            steps: [
+              { swapType: 0, router: r.router, path: [b, hub], fee: 0, poolId: '0x' + '00'.repeat(32) },
+              { swapType: 0, router: r.router, path: [hub, a], fee: 0, poolId: '0x' + '00'.repeat(32) }
+            ],
+            preferredDex: r.name,
+            minLiquidityUSD: 3000,
+            maxSlippageBps: 75
+          }
+        );
+      }
+    }
+
+    // Deduplicate identical steps
+    const serialized = new Set();
+    entry.tradePaths = entry.tradePaths.filter(tp => {
+      const key = JSON.stringify(tp);
+      if (serialized.has(key)) return false;
+      serialized.add(key);
+      return true;
+    });
+
+    out.push(entry);
+  }
+
+  await fs.writeFile(OUTPUT_PATHS, JSON.stringify(out, null, 2));
+  console.log(`paths.json written for ${chain}. Entries:`, out.length);
+}
+
+main().catch(e => {
+  console.error('autoDexPaths error:', e);
+  process.exit(1);
+});
